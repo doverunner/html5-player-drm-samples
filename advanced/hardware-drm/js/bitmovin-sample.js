@@ -1,6 +1,6 @@
 var config = {
     // TODO: You need to input your bitmovin license key here.
-    key: 'YOUR_BITMOVIN_LICENSE_KEY',
+    key: '215d88d4-5013-4456-bff5-b7b02fdffab2',
     network: {
         preprocessHttpRequest: function(type, request) {
             // Setting pallycon customData.
@@ -11,7 +11,7 @@ var config = {
 }
 
 var source = {
-    dash: dashUri,
+    dash: dashUriForHardwareDrm,
     hls: hlsUri,
     drm: {
         widevine: {
@@ -58,12 +58,12 @@ function setCustomData(type, request) {
     if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_WIDEVINE) {
         // const newWidevineToken = '';
         // setWidevineToken(newWidevineToken);
-        request.headers['pallycon-customdata-v2'] = widevineToken;
+        request.headers['pallycon-customdata-v2'] = supportL1?widevineTokenForHardwareDrm:widevineTokenForSoftwareDrm;
     }
     else if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY) {
         // const newPlayReadyToken = '';
         // setPlayReadyToken(newPlayReadyToken);
-        request.headers['pallycon-customdata-v2'] = playreadyToken;
+        request.headers['pallycon-customdata-v2'] = supportSl3000?playreadyTokenForHardwareDrm:playreadyTokenForSoftwareDrm;
     }
     else if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_FAIRPLAY) {
         // const newFairPlayToken = '';
@@ -90,10 +90,16 @@ checkSupportedDRM().then(async () => {
                 }
             }
         }
+        else {
+            source.dash = dashUriForSoftwareDrm;
+        }
     }
     else if (drmType === 'PlayReady') {        
         if(supportSl3000) {
             source.drm.playready.keySystemPriority = ["com.microsoft.playready.recommendation.3000"];
+        }
+        else {
+            source.dash = dashUriForSoftwareDrm;
         }
     }
 

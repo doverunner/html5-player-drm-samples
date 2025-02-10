@@ -90,6 +90,22 @@ async function initPlayer() {
                 },
             };
 
+            // Set the highest player robustness.
+            const widevineSecureConfig = await getWidevineHighestSecurityConfig();
+            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
+                playerConfig.drm.advanced['com.widevine.alpha'].videoRobustness = widevineSecureConfig.videoRobustness;
+                playerConfig.drm.advanced['com.widevine.alpha'].audioRobustness = widevineSecureConfig.audioRobustness;
+                if(supportL1 && isWindowsChrome()){    
+                    playerConfig.drm.preferredKeySystems = [
+                        'com.widevine.alpha.experiment',
+                        'com.widevine.alpha'
+                    ]
+                    playerConfig.drm.keySystemsMapping = {
+                        'com.widevine.alpha': 'com.widevine.alpha.experiment'
+                    }
+                }
+            }
+
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
                 // Only add headers to license requests:
                 if (type == shaka.net.NetworkingEngine.RequestType.LICENSE) {
@@ -110,24 +126,14 @@ async function initPlayer() {
             };
 
             if (supportSl3000) {
-                playerConfig = {
-                    drm: {
-                        servers: {
-                            'com.microsoft.playready': licenseUri,
-                        },
-                        preferredKeySystems: [
-                            'com.microsoft.playready.recommendation.3000',
-                            'com.microsoft.playready.recommendation',
-                            'com.microsoft.playready',
-                        ],
-                        keySystemsMapping: {
-                            'com.microsoft.playready':
-                                'com.microsoft.playready.recommendation.3000',
-                        },
-                    },
-                    streaming: {
-                        autoLowLatencyMode: true,
-                    },
+                playerConfig.drm.preferredKeySystems = [
+                    'com.microsoft.playready.recommendation.3000',
+                    'com.microsoft.playready.recommendation',
+                    'com.microsoft.playready',
+                ];
+
+                playerConfig.drm.keySystemsMapping = {
+                    'com.microsoft.playready': 'com.microsoft.playready.recommendation.3000',
                 };
             }
 

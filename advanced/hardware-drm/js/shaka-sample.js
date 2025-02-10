@@ -70,7 +70,7 @@ async function initPlayer() {
             }
         });
     } else {
-        contentUri = dashUri;
+        contentUri = dashUriForHardwareDrm;
 
         if ('Widevine' === drmType) {
             playerConfig = {
@@ -81,23 +81,34 @@ async function initPlayer() {
                     advanced: {
                         'com.widevine.alpha': {
                             'persistentStateRequired': true,
-                            videoRobustness: 'HW_SECURE_ALL',
-                            audioRobustness: 'HW_SECURE_CRYPTO',
                             'serverCertificateUri': widevineCertUri,
                         }
-                    },
-                    preferredKeySystems: [
-                        'com.widevine.alpha.experiment',
-                        'com.widevine.alpha'
-                    ],
-                    keySystemsMapping: {
-                        'com.widevine.alpha': 'com.widevine.alpha.experiment'
                     }
                 },
                 streaming: {
                     autoLowLatencyMode: true,
                 },
             };
+
+            // Set the highest player robustness.
+            const widevineSecureConfig = await getWidevineHighestSecurityConfig();
+            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
+                playerConfig.drm.advanced['com.widevine.alpha'].videoRobustness = widevineSecureConfig.videoRobustness;
+                playerConfig.drm.advanced['com.widevine.alpha'].audioRobustness = widevineSecureConfig.audioRobustness;
+                if(supportL1 && isWindowsChrome()){    
+                    playerConfig.drm.preferredKeySystems = [
+                        'com.widevine.alpha.experiment',
+                        'com.widevine.alpha'
+                    ]
+                    playerConfig.drm.keySystemsMapping = {
+                        'com.widevine.alpha': 'com.widevine.alpha.experiment'
+                    }
+                }
+            }
+
+            if(!supportL1){
+                contentUri = dashUriForSoftwareDrm;
+            }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
                 // Only add headers to license requests:
@@ -119,25 +130,18 @@ async function initPlayer() {
             };
 
             if (supportSl3000) {
-                playerConfig = {
-                    drm: {
-                        servers: {
-                            'com.microsoft.playready': licenseUri,
-                        },
-                        preferredKeySystems: [
-                            'com.microsoft.playready.recommendation.3000',
-                            'com.microsoft.playready.recommendation',
-                            'com.microsoft.playready',
-                        ],
-                        keySystemsMapping: {
-                            'com.microsoft.playready':
-                                'com.microsoft.playready.recommendation.3000',
-                        },
-                    },
-                    streaming: {
-                        autoLowLatencyMode: true,
-                    },
+                playerConfig.drm.preferredKeySystems = [
+                    'com.microsoft.playready.recommendation.3000',
+                    'com.microsoft.playready.recommendation',
+                    'com.microsoft.playready',
+                ];
+
+                playerConfig.drm.keySystemsMapping = {
+                    'com.microsoft.playready': 'com.microsoft.playready.recommendation.3000',
                 };
+            }
+            else {
+                contentUri = dashUriForSoftwareDrm;
             }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
@@ -178,12 +182,12 @@ function setCustomData(request) {
     if ('Widevine' === drmType) {
         // const newWidevineToken = '';
         // setWidevineToken(newWidevineToken);
-        request.headers['pallycon-customdata-v2'] = widevineToken;
+        request.headers['pallycon-customdata-v2'] = supportL1?widevineTokenForHardwareDrm:widevineTokenForSoftwareDrm;
     }
     else if ('PlayReady' === drmType) {
         // const newPlayReadyToken = '';
         // setPlayReadyToken(newPlayReadyToken);
-        request.headers['pallycon-customdata-v2'] = playreadyToken;
+        request.headers['pallycon-customdata-v2'] = supportSl3000?playreadyTokenForHardwareDrm:playreadyTokenForSoftwareDrm;
     }
     else if ('FairPlay' === drmType) {
         // const newFairPlayToken = '';

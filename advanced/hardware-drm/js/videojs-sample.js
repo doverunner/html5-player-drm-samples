@@ -80,23 +80,15 @@ function configureDRM() {
             };
         } else if ('PlayReady' === drmType) {
             playerConfig = {
-                src: dashUri,
+                src: dashUriForHardwareDrm,
                 type: 'application/dash+xml',
-                keySystems: {
-                    'com.microsoft.playready': {
-                        url: licenseUri,
-                        licenseHeaders:{
-                            'pallycon-customdata-v2': playreadyToken
-                        },
-                    }
-                }
-            }
-
-            if(supportSl3000){
+            };
+            
+            if (supportSl3000) {
                 playerConfig.keySystems = {
                     'com.microsoft.playready.recommendation.3000': {
                         getLicense: (emeOptions, keyMessage, callback) => {
-                            // Modify keyMessage to parse and request only Challenge since it requests the entire PlayReadyKeyMessage data
+                            // Modify the keyMessage to parse and request only the Challenge, as the SL3000 key system requests the full PlayReadyKeyMessage data.
                             const modifiedMessage = extractChallengeOnly(keyMessage);                            
                             const decodedMessage = atob(modifiedMessage);
                             const uint8Array = new Uint8Array(decodedMessage.length);
@@ -111,7 +103,7 @@ function configureDRM() {
                                 body: uint8Array,
                                 headers: {
                                     'Content-Type': 'text/xml; charset=utf-8',
-                                    'pallycon-customdata-v2': playreadyToken,
+                                    'pallycon-customdata-v2': playreadyTokenForHardwareDrm,
                                 }
                             }, function(err, response, responseBody) {
                                 if (err) {
@@ -122,15 +114,30 @@ function configureDRM() {
                             });
                         }
                     }
-                }
+                };
+            } else {
+                playerConfig.src = dashUriForSoftwareDrm;
+                playerConfig.keySystems = {
+                    'com.microsoft.playready': {
+                        url: licenseUri,
+                        licenseHeaders: {
+                            'pallycon-customdata-v2': playreadyTokenForSoftwareDrm
+                        }
+                    }
+                };
             }
         } else if ('Widevine' === drmType) {
-            const widevineCert = await getWidevineCertBase64()
             playerConfig = {
-                src: dashUri,
+                src: dashUriForHardwareDrm,
                 type: 'application/dash+xml',
-                keySystems: {
-                    'com.widevine.alpha.experiment': {                         
+                keySystems: {},
+            };
+
+            // Set the highest player robustness.
+            const widevineSecureConfig = await getWidevineHighestSecurityConfig();
+            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
+                if(supportL1) {
+                    playerConfig.keySystems[widevineSecureConfig.keySystem] = {
                         getCertificate: function (emeOptions, callback) {
                             videojs.xhr({
                                 url: widevineCertUri,
@@ -146,34 +153,37 @@ function configureDRM() {
                         },
                         url: licenseUri,
                         licenseHeaders:{
-                            'pallycon-customdata-v2': widevineToken
+                            'pallycon-customdata-v2': widevineTokenForHardwareDrm
                         },
                         persistentState: 'required',
-                        videoRobustness: 'HW_SECURE_ALL',     
-                        audioRobustness: 'HW_SECURE_CRYPTO',
-                    },
-                    'com.widevine.alpha': {                        
-                        getCertificate: function (emeOptions, callback) {
-                            videojs.xhr({
-                                url: widevineCertUri,
-                                method: 'GET',
-                                responseType: 'arraybuffer',
-                            }, function (err, response, responseBody) {
-                                if (err) {
-                                    callback(err)
-                                    return
-                                }
-                                callback(null, responseBody);
-                            })
-                        },
-                        url: licenseUri,
-                        licenseHeaders:{
-                            'pallycon-customdata-v2': widevineToken
-                        },
-                        persistentState: 'required',
-                    }
+                        videoRobustness: widevineSecureConfig.videoRobustness,
+                        audioRobustness: widevineSecureConfig.audioRobustness
+                    };
                 }
             }
+            
+            // There is an issue with the videojs eme plugin setup, so the default key system should be applied after the experiment key system if it is possible to set it up.
+            playerConfig.keySystems['com.widevine.alpha'] = {
+                getCertificate: function (emeOptions, callback) {
+                    videojs.xhr({
+                        url: widevineCertUri,
+                        method: 'GET',
+                        responseType: 'arraybuffer',
+                    }, function (err, response, responseBody) {
+                        if (err) {
+                            callback(err)
+                            return
+                        }
+                        callback(null, responseBody);
+                    })
+                },
+                url: licenseUri,
+                licenseHeaders:{
+                    'pallycon-customdata-v2': supportL1?widevineTokenForHardwareDrm:
+                    widevineTokenForSoftwareDrm
+                },
+                persistentState: 'required',
+            };
         } else {
             console.log("No DRM supported in this browser");
         }
@@ -183,7 +193,7 @@ function configureDRM() {
 
 checkSupportedDRM().then(() => {
     checkBrowser();
-    player.ready(function(){        
+    player.ready(function(){
         configureDRM();
     });
     player.play();
