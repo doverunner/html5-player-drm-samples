@@ -169,7 +169,7 @@ async function checkSupportedDRM() {
               console.log(`${drmType} support ok`);
 
               if (drm[key].name === 'PlayReady') {
-                // supportSl3000 = await tryKeySystemAccess('com.microsoft.playready.recommendation.3000', baseEmeConfig);
+                supportSl3000 = await tryKeySystemAccess('com.microsoft.playready.recommendation.3000', baseEmeConfig);
               }
           }
       } catch (e) {
