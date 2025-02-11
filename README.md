@@ -40,6 +40,7 @@ widevine: {
 
 
 
-## Extension
+## Advanced
 
-- [CSL (Concurrent Stream Limiting)](extension/csl/README.md)
+- [CSL (Concurrent Stream Limiting)](advanced/csl/README.md)
+- [Hardware DRM](advanced/hardware-drm/README.md)
