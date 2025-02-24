@@ -81,13 +81,11 @@ checkSupportedDRM().then(async () => {
 
         // Set the highest player robustness.
         const widevineSecureConfig = await getWidevineHighestSecurityConfig();
-        if(supportL1){            
-            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
-                source.drm.widevine.audioRobustness = widevineSecureConfig.audioRobustness;
-                source.drm.widevine.videoRobustness = widevineSecureConfig.videoRobustness;
-                if(isWindowsChrome()){
-                    source.drm.widevine.keySystemPriority = ["com.widevine.alpha.experiment"];
-                }
+        if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
+            source.drm.widevine.audioRobustness = widevineSecureConfig.audioRobustness;
+            source.drm.widevine.videoRobustness = widevineSecureConfig.videoRobustness;
+            if(supportL1 && isWindowsChrome()){
+                source.drm.widevine.keySystemPriority = ["com.widevine.alpha.experiment"];
             }
         }
     }

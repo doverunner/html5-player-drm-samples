@@ -95,7 +95,10 @@ async function initPlayer() {
             if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
                 playerConfig.drm.advanced['com.widevine.alpha'].videoRobustness = widevineSecureConfig.videoRobustness;
                 playerConfig.drm.advanced['com.widevine.alpha'].audioRobustness = widevineSecureConfig.audioRobustness;
-                if(supportL1 && isWindowsChrome()){    
+            }
+
+            if(supportL1) {
+                if(isWindowsChrome()) {
                     playerConfig.drm.preferredKeySystems = [
                         'com.widevine.alpha.experiment',
                         'com.widevine.alpha'
@@ -105,8 +108,7 @@ async function initPlayer() {
                     }
                 }
             }
-
-            if(!supportL1){
+            else {
                 contentUri = dashUriForSoftwareDrm;
             }
 

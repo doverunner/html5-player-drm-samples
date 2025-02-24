@@ -1,6 +1,6 @@
 var config = {
     // TODO: You need to input your bitmovin license key here.
-    key: '215d88d4-5013-4456-bff5-b7b02fdffab2',
+    key: 'YOUR_BITMOVIN_LICENSE_KEY',
     network: {
         preprocessHttpRequest: function(type, request) {
             // Setting pallycon customData.
@@ -81,13 +81,14 @@ checkSupportedDRM().then(async () => {
 
         // Set the highest player robustness.
         const widevineSecureConfig = await getWidevineHighestSecurityConfig();
-        if(supportL1){            
-            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
-                source.drm.widevine.audioRobustness = widevineSecureConfig.audioRobustness;
-                source.drm.widevine.videoRobustness = widevineSecureConfig.videoRobustness;
-                if(isWindowsChrome()){
-                    source.drm.widevine.keySystemPriority = ["com.widevine.alpha.experiment"];
-                }
+        if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
+            source.drm.widevine.audioRobustness = widevineSecureConfig.audioRobustness;
+            source.drm.widevine.videoRobustness = widevineSecureConfig.videoRobustness;            
+        }
+
+        if(supportL1) {      
+            if(isWindowsChrome()) {
+                source.drm.widevine.keySystemPriority = ["com.widevine.alpha.experiment"];
             }
         }
         else {
