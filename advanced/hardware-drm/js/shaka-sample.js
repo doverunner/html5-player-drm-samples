@@ -70,7 +70,7 @@ async function initPlayer() {
             }
         });
     } else {
-        contentUri = dashUri;
+        contentUri = dashUriForHardwareDrm;
 
         if ('Widevine' === drmType) {
             playerConfig = {
@@ -95,7 +95,10 @@ async function initPlayer() {
             if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
                 playerConfig.drm.advanced['com.widevine.alpha'].videoRobustness = widevineSecureConfig.videoRobustness;
                 playerConfig.drm.advanced['com.widevine.alpha'].audioRobustness = widevineSecureConfig.audioRobustness;
-                if(supportL1 && isWindowsChrome()){    
+            }
+
+            if(supportL1) {
+                if(isWindowsChrome()) {
                     playerConfig.drm.preferredKeySystems = [
                         'com.widevine.alpha.experiment',
                         'com.widevine.alpha'
@@ -104,6 +107,9 @@ async function initPlayer() {
                         'com.widevine.alpha': 'com.widevine.alpha.experiment'
                     }
                 }
+            }
+            else {
+                contentUri = dashUriForSoftwareDrm;
             }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
@@ -135,6 +141,9 @@ async function initPlayer() {
                 playerConfig.drm.keySystemsMapping = {
                     'com.microsoft.playready': 'com.microsoft.playready.recommendation.3000',
                 };
+            }
+            else {
+                contentUri = dashUriForSoftwareDrm;
             }
 
             player.getNetworkingEngine().registerRequestFilter(function (type, request) {
@@ -175,12 +184,12 @@ function setCustomData(request) {
     if ('Widevine' === drmType) {
         // const newWidevineToken = '';
         // setWidevineToken(newWidevineToken);
-        request.headers['pallycon-customdata-v2'] = widevineToken;
+        request.headers['pallycon-customdata-v2'] = supportL1?widevineTokenForHardwareDrm:widevineTokenForSoftwareDrm;
     }
     else if ('PlayReady' === drmType) {
         // const newPlayReadyToken = '';
         // setPlayReadyToken(newPlayReadyToken);
-        request.headers['pallycon-customdata-v2'] = playreadyToken;
+        request.headers['pallycon-customdata-v2'] = supportSl3000?playreadyTokenForHardwareDrm:playreadyTokenForSoftwareDrm;
     }
     else if ('FairPlay' === drmType) {
         // const newFairPlayToken = '';

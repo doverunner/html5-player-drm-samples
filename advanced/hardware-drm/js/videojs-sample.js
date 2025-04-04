@@ -80,7 +80,7 @@ function configureDRM() {
             };
         } else if ('PlayReady' === drmType) {
             playerConfig = {
-                src: dashUri,
+                src: dashUriForHardwareDrm,
                 type: 'application/dash+xml',
             };
             
@@ -103,7 +103,7 @@ function configureDRM() {
                                 body: uint8Array,
                                 headers: {
                                     'Content-Type': 'text/xml; charset=utf-8',
-                                    'pallycon-customdata-v2': playreadyToken,
+                                    'pallycon-customdata-v2': playreadyTokenForHardwareDrm,
                                 }
                             }, function(err, response, responseBody) {
                                 if (err) {
@@ -116,25 +116,26 @@ function configureDRM() {
                     }
                 };
             } else {
+                playerConfig.src = dashUriForSoftwareDrm;
                 playerConfig.keySystems = {
                     'com.microsoft.playready': {
                         url: licenseUri,
                         licenseHeaders: {
-                            'pallycon-customdata-v2': playreadyToken
+                            'pallycon-customdata-v2': playreadyTokenForSoftwareDrm
                         }
                     }
                 };
             }
         } else if ('Widevine' === drmType) {
             playerConfig = {
-                src: dashUri,
+                src: dashUriForHardwareDrm,
                 type: 'application/dash+xml',
                 keySystems: {},
             };
 
             // Set the highest player robustness.
             const widevineSecureConfig = await getWidevineHighestSecurityConfig();
-            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){                
+            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){
                 if(supportL1) {
                     playerConfig.keySystems[widevineSecureConfig.keySystem] = {
                         getCertificate: function (emeOptions, callback) {
@@ -152,7 +153,7 @@ function configureDRM() {
                         },
                         url: licenseUri,
                         licenseHeaders:{
-                            'pallycon-customdata-v2': widevineToken
+                            'pallycon-customdata-v2': widevineTokenForHardwareDrm
                         },
                         persistentState: 'required',
                         videoRobustness: widevineSecureConfig.videoRobustness,
@@ -178,7 +179,8 @@ function configureDRM() {
                 },
                 url: licenseUri,
                 licenseHeaders:{
-                    'pallycon-customdata-v2': widevineToken
+                    'pallycon-customdata-v2': supportL1?widevineTokenForHardwareDrm:
+                    widevineTokenForSoftwareDrm
                 },
                 persistentState: 'required',
             };
