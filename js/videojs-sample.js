@@ -134,34 +134,33 @@ function configureDRM() {
 
             // Set the highest player robustness.
             const widevineSecureConfig = await getWidevineHighestSecurityConfig();
-            if(widevineSecureConfig.videoRobustness && widevineSecureConfig.audioRobustness){                
-                if(supportL1) {
-                    playerConfig.keySystems[widevineSecureConfig.keySystem] = {
-                        getCertificate: function (emeOptions, callback) {
-                            videojs.xhr({
-                                url: widevineCertUri,
-                                method: 'GET',
-                                responseType: 'arraybuffer',
-                            }, function (err, response, responseBody) {
-                                if (err) {
-                                    callback(err)
-                                    return
-                                }
-                                callback(null, responseBody);
-                            })
-                        },
-                        url: licenseUri,
-                        licenseHeaders:{
-                            'pallycon-customdata-v2': widevineToken
-                        },
-                        persistentState: 'required',
-                        videoRobustness: widevineSecureConfig.videoRobustness,
-                        audioRobustness: widevineSecureConfig.audioRobustness
-                    };
-                }
+            
+            if(supportL1 && isWindowsChrome()){ {
+                playerConfig.keySystems['com.widevine.alpha.experiment'] = {
+                    getCertificate: function (emeOptions, callback) {
+                        videojs.xhr({
+                            url: widevineCertUri,
+                            method: 'GET',
+                            responseType: 'arraybuffer',
+                        }, function (err, response, responseBody) {
+                            if (err) {
+                                callback(err)
+                                return
+                            }
+                            callback(null, responseBody);
+                        })
+                    },
+                    url: licenseUri,
+                    licenseHeaders:{
+                        'pallycon-customdata-v2': widevineToken
+                    },
+                    persistentState: 'required',
+                    videoRobustness: widevineSecureConfig.videoRobustness,
+                    audioRobustness: widevineSecureConfig.audioRobustness
+                };
             }
             
-            // There is an issue with the videojs eme plugin setup, so the default key system should be applied after the experiment key system if it is possible to set it up.
+            // There is an issue with the videojs eme plugin setup, so the default key system should be applied AFTER the experiment key system if it is possible to set it up.
             playerConfig.keySystems['com.widevine.alpha'] = {
                 getCertificate: function (emeOptions, callback) {
                     videojs.xhr({
@@ -181,6 +180,8 @@ function configureDRM() {
                     'pallycon-customdata-v2': widevineToken
                 },
                 persistentState: 'required',
+                videoRobustness: widevineSecureConfig.videoRobustness,
+                audioRobustness: widevineSecureConfig.audioRobustness
             };
         } else {
             console.log("No DRM supported in this browser");
