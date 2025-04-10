@@ -135,7 +135,7 @@ function configureDRM() {
             // Set the highest player robustness.
             const widevineSecureConfig = await getWidevineHighestSecurityConfig();
             
-            if(supportL1 && isWindowsChrome()){ {
+            if(supportL1 && isWindowsChrome()) {
                 playerConfig.keySystems['com.widevine.alpha.experiment'] = {
                     getCertificate: function (emeOptions, callback) {
                         videojs.xhr({
