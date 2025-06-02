@@ -4,16 +4,16 @@ var supportSl3000 = false;
 var supportL1 = false;
 
 // Replace the DASH and HLS URIs when you test your own content. 
-var dashUri = 'https://contents.pallycon.com/DEMO/app/big_buck_bunny/dash/stream.mpd';
-var hlsUri = 'https://contents.pallycon.com/DEMO/app/big_buck_bunny/hls/master.m3u8';
+var dashUri = 'https://drm-contents.doverunner.com/DEMO/app/big_buck_bunny/dash/stream.mpd';
+var hlsUri = 'https://drm-contents.doverunner.com/DEMO/app/big_buck_bunny/hls/master.m3u8';
 
-var licenseUri = 'https://license-global.pallycon.com/ri/licenseManager.do';
+var licenseUri = 'https://drm-license.doverunner.com/ri/licenseManager.do';
 
-var widevineCertUri = 'https://license-global.pallycon.com/ri/widevineCert.do?siteId=DEMO'; // for cert
+var widevineCertUri = 'https://drm-license.doverunner.com/ri/widevineCert.do?siteId=DEMO'; // for cert
 
 // Replace the DEMO site ID with yours when you test your own FPS content.
-var fairplayCertUri = 'https://license-global.pallycon.com/ri/fpsKeyManager.do?siteId=DEMO'; // for base64 encoded binary cert data
-var fairplayCertDerUri = 'https://license-global.pallycon.com/ri/fpsCert.do?siteId=DEMO'; // for cert .der file download 
+var fairplayCertUri = 'https://drm-license.doverunner.com/ri/fpsKeyManager.do?siteId=DEMO'; // for base64 encoded binary cert data
+var fairplayCertDerUri = 'https://drm-license.doverunner.com/ri/fpsCert.do?siteId=DEMO'; // for cert .der file download 
 
 // Create and set the license tokens when you test your own content.
 var widevineToken = 'eyJrZXlfcm90YXRpb24iOmZhbHNlLCJyZXNwb25zZV9mb3JtYXQiOiJvcmlnaW5hbCIsInVzZXJfaWQiOiJ1dSIsImRybV90eXBlIjoid2lkZXZpbmUiLCJzaXRlX2lkIjoiREVNTyIsImhhc2giOiI3MGhpMHcwbmFNUHM2c0hiMHYxS1lvbXFxVkZNYzJ6XC96Z1VoWlRJVlN0Yz0iLCJjaWQiOiJkZW1vLWJiYi1zaW1wbGUiLCJwb2xpY3kiOiI5V3FJV2tkaHB4VkdLOFBTSVljbkpzY3Z1QTlzeGd1YkxzZCthanVcL2JvbVFaUGJxSSt4YWVZZlFvY2NrdnVFZnhEY2NtN2NXZFZYcXJkTWdBUWptcVo5bzdYTEZ6MjBOaG1Kdklpd1FidWhLaCtDMmZJSEw5T3UxU09Bc2hQU0FWZHhhWVVKSnJsWjVVMXU1UGNlcjE0NVpCczdnc3ZRc0lsbDlGVHZXanQ3bWhaOHJ3ejdybVNYcURBdEdqYTRsYmVrUnhcL1pyRWx4dkJhWXV0YWFvdVlISWpkNlZpRWVXZEVpRzJIV0VIMGczcW1LYW1QbUp2VUluN0tVODZrUDQiLCJ0aW1lc3RhbXAiOiIyMDI1LTAxLTMxVDAyOjA2OjM4WiJ9';

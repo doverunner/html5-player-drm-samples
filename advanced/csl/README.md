@@ -8,8 +8,8 @@
 
 |    DRM    |    Manual Setting    | Sample Code                                                          |
 |:---------:|:--------------------:|:---------------------------------------------------------------------|
-| Widevine  |  :heavy_check_mark:  | [Bitmovin Player](./bitmovin-player/bitmovin-player-pallycon-renewal-sample.html) | 
-| PlayReady |  :heavy_check_mark:  | [Bitmovin Player](./bitmovin-player/bitmovin-player-pallycon-renewal-sample.html) |
+| Widevine  |  :heavy_check_mark:  | [Bitmovin Player](./bitmovin-player/bitmovin-player-doverunner-renewal-sample.html) | 
+| PlayReady |  :heavy_check_mark:  | [Bitmovin Player](./bitmovin-player/bitmovin-player-doverunner-renewal-sample.html) |
 | FairPlay  |  :heavy_check_mark:  | [FPS SDK (Safari)](./fps-sdk/fps_safari_hls_key_renewal-sample.html) | 
 
 

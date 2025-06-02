@@ -4,17 +4,17 @@ var supportSl3000 = false;
 var supportL1 = false;
 
 // Replace the DASH and HLS URIs when you test your own content. 
-var dashUriForHardwareDrm = 'https://contents.pallycon.com/DEMO/app/tearsofsteel-multimanifests/dash/stream_HD.mpd';
-var dashUriForSoftwareDrm = 'https://contents.pallycon.com/DEMO/app/tearsofsteel-multimanifests/dash/stream_SD.mpd';
-var hlsUri = 'https://contents.pallycon.com/DEMO/app/tearsofsteel-multimanifests/hls/master_HD.m3u8';
+var dashUriForHardwareDrm = 'https://drm-contents.doverunner.com/DEMO/app/tearsofsteel-multimanifests/dash/stream_HD.mpd';
+var dashUriForSoftwareDrm = 'https://drm-contents.doverunner.com/DEMO/app/tearsofsteel-multimanifests/dash/stream_SD.mpd';
+var hlsUri = 'https://drm-contents.doverunner.com/DEMO/app/tearsofsteel-multimanifests/hls/master_HD.m3u8';
 
-var licenseUri = 'https://license-global.pallycon.com/ri/licenseManager.do';
+var licenseUri = 'https://drm-license.doverunner.com/ri/licenseManager.do';
 
-var widevineCertUri = 'https://license-global.pallycon.com/ri/widevineCert.do?siteId=DEMO'; // for cert
+var widevineCertUri = 'https://drm-license.doverunner.com/ri/widevineCert.do?siteId=DEMO'; // for cert
 
 // Replace the DEMO site ID with yours when you test your own FPS content.
-var fairplayCertUri = 'https://license-global.pallycon.com/ri/fpsKeyManager.do?siteId=DEMO'; // for base64 encoded binary cert data
-var fairplayCertDerUri = 'https://license-global.pallycon.com/ri/fpsCert.do?siteId=DEMO'; // for cert .der file download 
+var fairplayCertUri = 'https://drm-license.doverunner.com/ri/fpsKeyManager.do?siteId=DEMO'; // for base64 encoded binary cert data
+var fairplayCertDerUri = 'https://drm-license.doverunner.com/ri/fpsCert.do?siteId=DEMO'; // for cert .der file download 
 
 // Create and set the license tokens when you test your own content.
 var widevineTokenForSoftwareDrm = 'eyJrZXlfcm90YXRpb24iOmZhbHNlLCJyZXNwb25zZV9mb3JtYXQiOiJvcmlnaW5hbCIsInVzZXJfaWQiOiJ1dSIsImRybV90eXBlIjoid2lkZXZpbmUiLCJzaXRlX2lkIjoiREVNTyIsImhhc2giOiJGYndcL0MwYWNocUkwSXZhWEhcL09xbmR0eTRibFFJQjhkbDhMUURYQXAwMG89IiwiY2lkIjoidGVhcnNvZnN0ZWVsIiwicG9saWN5IjoiOVdxSVdrZGhweFZHSzhQU0lZY25Kc2N2dUE5c3hndWJMc2QrYWp1XC9ib2x5QTB6THVJT0VFNll4MlRiWVdCTG9OaGFjU0ViN0F4c0FVQ3JBQ3VTOFVUSzVIaGo1QXZ4VHhUREhsdFRcL0lvdTJ6XC95QUZCZE5CbDVkK1ByYWxXc2djNlRocEhsRFNHWFYwYWx5cG5iR2UyYkZuQ1wvRGZpbHlUTHVFcFdKZXNMdXd1R05RNHhOVndNT0o1WWxcL3pOc1FkMWY1YyttTWFYRXdleEZrUXRVUG5mdUk2WFdDVlBHWjZcL1NoZFBtbzlWM2FWRTJzMk5HWXgwK0FFcDlCNnVrN2lLcExTSjc5bFVQeHZkTnV4S3psQUlXNzcrUEZadnY0RTZBZ0NKTUk4b3M2XC9manNqanNlaWNCbzNNalM0T1FDNUwxS2VhdDU4K3p2c3FCYlFcL1JSOVhEZ2tieU1zeXlmNWxJUDlxMTBcL0FNREtyMWhXWG5qXC9MYkhqcDU4VVU4aG5WcVBBbk5ja25NVXMrOWNXbWlTTTdwRnFqZU1QMTFGbXBpTzVSeXZ5dE1OWXRreGY3UFBSK29WYTVBbTkxZ0pyWmxYa1JGZmZyeWF0NmtHd0orOSswXC9CSXZXUkQyaDN2WmJuRFdZQUFqND0iLCJ0aW1lc3RhbXAiOiIyMDI1LTAxLTMxVDExOjM1OjM5WiJ9';

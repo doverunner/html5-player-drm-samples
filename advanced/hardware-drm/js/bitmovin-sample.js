@@ -3,7 +3,7 @@ var config = {
     key: 'YOUR_BITMOVIN_LICENSE_KEY',
     network: {
         preprocessHttpRequest: function(type, request) {
-            // Setting pallycon customData.
+            // Setting doverunner customData.
             setCustomData(type, request);
             return Promise.resolve(request);
         }

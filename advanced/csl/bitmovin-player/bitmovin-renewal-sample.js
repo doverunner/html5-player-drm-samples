@@ -4,25 +4,30 @@ var config =  {
     key: 'YOUR_BITMOVIN_LICENSE_KEY',
     network: {
         preprocessHttpRequest: function(type, request) {
-            // Setting pallycon customData.
+            // Setting doverunner customData.
             setCustomData(type, request);
             return Promise.resolve(request);
         },
         preprocessHttpResponse: function(type, response) {
-            if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY) {
+            if (type === bitmovin.player.HttpRequestType.DRM_LICENSE_PLAYREADY
+                || type === bitmovin.player.HttpRequestType.DRM_LICENSE_FAIRPLAY
+            ) {
 
                 // Something to extracts expiration dates.
-                setTimeout(() => {player.drm.renewLicense(licenseId)}, 600000);  // TODO set Renewal Interval milliseconds ( 10 minute )
+                setTimeout(() => {player.drm.renewLicense(licenseId)}, 30000);  // TODO set Renewal Interval milliseconds ( 10 minute )
 
             }
-
+        },
+        tweaks: {
+            prefer_managed_media_source: true // ManagedMediaSource 사용 활성화
         }
     }
 }
 
 
 var source = {
-    dash: dashUri,
+    // dash: dashUri,
+    hls: hlsUri,
     drm: {
         widevine: {
             LA_URL: licenseUri,
@@ -32,6 +37,25 @@ var source = {
         },
         playready: {
             LA_URL: licenseUri,
+        },
+        fairplay: {
+            LA_URL: licenseUri,
+            certificateURL: fairplayCertUri,
+            prepareContentId: function (contentId) {
+                return contentId.substring(contentId.indexOf('skd://') + 6);
+            },
+            prepareCertificate: function (rawResponse) {
+                var responseText = String.fromCharCode.apply(null, new Uint8Array(rawResponse));
+                var raw = window.atob(responseText);
+                var rawLength = raw.length;
+                var certificate = new Uint8Array(new ArrayBuffer(rawLength));
+
+                for (var i = 0; i < rawLength; i++)
+                    certificate[i] = raw.charCodeAt(i);
+
+                return certificate;
+            },
+            useUint16InitData: true
         }
     }
 };
@@ -88,6 +112,10 @@ checkSupportedDRM().then(()=> {
         function (reason) {
             console.log('Error while creating Bitmovin Player instance');
         }
-    );
-})
+    );    
 
+    // FairPlay 라이선스 갱신 이벤트 리스너 (옵션)
+    player.on(bitmovin.player.PlayerEvent.FairplayLicenseAcquired, function(event) {
+        console.log("FairPlay 라이선스가 갱신되었습니다:", event);
+    });
+})

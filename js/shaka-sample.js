@@ -196,13 +196,13 @@ function parsingResponse(response) {
     console.log('responseText :: ', responseText);
 
     try {
-        const pallyconObj = JSON.parse(responseText);
-        if (pallyconObj && pallyconObj.errorCode && pallyconObj.message) {
+        const doverunnerObj = JSON.parse(responseText);
+        if (doverunnerObj && doverunnerObj.errorCode && doverunnerObj.message) {
             if ("8002" != errorCode) {
-                alert("PallyCon Error : " + pallyconObj.message + "(" + pallyconObj.errorCode + ")");
+                alert("Doverunner Error : " + doverunnerObj.message + "(" + doverunnerObj.errorCode + ")");
                 //window.alert('No Rights. Server Response ' + responseText);
             } else {
-                var errorObj = JSON.parse(pallyconObj.message);
+                var errorObj = JSON.parse(doverunnerObj.message);
                 alert("Error : " + errorObj.MESSAGE + "(" + errorObj.ERROR + ")");
             }
         }
