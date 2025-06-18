@@ -14,7 +14,7 @@ var config =  {
             ) {
 
                 // Something to extracts expiration dates.
-                setTimeout(() => {player.drm.renewLicense(licenseId)}, 30000);  // TODO set Renewal Interval milliseconds ( 10 minute )
+                setTimeout(() => {player.drm.renewLicense(licenseId)}, 600000);  // TODO set Renewal Interval milliseconds ( 10 minute )
 
             }
         },
